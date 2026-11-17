@@ -6,16 +6,16 @@ VERT = len(sys.argv)>2 and sys.argv[2]=="v"; FPS=24
 SZ=(10.8,19.2) if VERT else (19.2,10.8)
 def fig(proj=None):
     f=plt.figure(figsize=SZ,dpi=100); f.patch.set_facecolor(BG)
-    a=f.add_axes([.12 if VERT else .09,.25 if VERT else .27,.80 if VERT else .84,.52 if VERT else .5],projection=proj) if not proj else f.add_axes([.02,.12,.96,.6 if VERT else .66],projection=proj)
+    a=f.add_axes([.12 if VERT else .09,.40 if VERT else .36,.80 if VERT else .84,.36 if VERT else .40],projection=proj) if not proj else f.add_axes([.02,.30 if VERT else .20,.96,.46 if VERT else .54],projection=proj)
     a.set_facecolor(BG); return f,a
 def estilo2d(a):
     for s in a.spines.values(): s.set_color("#445")
     a.tick_params(colors=G,labelsize=22 if VERT else 20); a.grid(color="#223",lw=1)
 def titulo(f,t,sub):
-    f.text(.5,.93 if VERT else .93,t,color=W,fontsize=44 if VERT else 38,ha="center",weight="bold")
+    f.text(.5,.93 if VERT else .93,t,color=W,fontsize=36 if VERT else 38,ha="center",weight="bold")
     f.text(.5,.885 if VERT else .875,sub,color=C,fontsize=30 if VERT else 26,ha="center")
 def pie(f,t,col=Y,y=None):
-    y=y or (.09 if VERT else .08)
+    y=y or (.27 if VERT else .21)
     return f.text(.5,y,t,color=col,fontsize=46 if VERT else 40,ha="center",weight="bold")
 def guardar(an,f,nombre):
     an.save(f"anim/{nombre}{'-v' if VERT else ''}.mp4",writer=FFMpegWriter(fps=FPS,bitrate=6000,extra_args=["-pix_fmt","yuv420p"]),savefig_kwargs={"facecolor":BG}); plt.close(f)
@@ -25,7 +25,7 @@ def riemann():
     f,a=fig(); estilo2d(a); titulo(f,"Integral = suma de rectángulos","Área bajo y = 3x² + 1, de x = 0 a x = 2")
     x=np.linspace(0,2,400); a.plot(x,3*x**2+1,color=C,lw=5); a.set_xlim(-.05,2.1); a.set_ylim(0,14)
     fs=[2,3,4,6,8,12,16,24,32,48,64,100]; HOLD=22; TR=6
-    t1=pie(f,""); t0=f.text(.5,.17 if VERT else .165,"",color=W,fontsize=34 if VERT else 30,ha="center")
+    t1=pie(f,""); t0=f.text(.5,.33 if VERT else .275,"",color=W,fontsize=34 if VERT else 30,ha="center")
     pol=[]
     def dib(n):
         for p in pol: p.remove()
@@ -59,7 +59,7 @@ def volumen():
     f,a=fig("3d"); titulo(f,"Volumen por discos","V = π ∫ x dx   (y = √x, de 0 a 4)" if VERT else "V = π ∫ x dx  (y = √x girando alrededor del eje x, de 0 a 4)")
     a.set_facecolor(BG); a.xaxis.pane.set_facecolor(BG); a.yaxis.pane.set_facecolor(BG); a.zaxis.pane.set_facecolor(BG)
     for ax in (a.xaxis,a.yaxis,a.zaxis): ax.pane.set_edgecolor("#334"); ax._axinfo["grid"]["color"]="#223"; ax.set_tick_params(colors=G,labelsize=14)
-    a.set_xlim(0,4); a.set_ylim(-2,2); a.set_zlim(-2,2); a.set_box_aspect((2.2,1,1),zoom=1.3 if not VERT else 0.9); t1=pie(f,"V = 0,00",y=.06); N=260; th=np.linspace(0,2*np.pi,60); sup=[]
+    a.set_xlim(0,4); a.set_ylim(-2,2); a.set_zlim(-2,2); a.set_box_aspect((2.2,1,1),zoom=1.4 if not VERT else 1.3); t1=pie(f,"V = 0,00",y=.21 if not VERT else .27); N=260; th=np.linspace(0,2*np.pi,60); sup=[]
     def fr(k):
         s=ease(min(1,k/170))*4
         for p in sup: p.remove()
@@ -77,7 +77,7 @@ def volumen():
 def impropia():
     f,a=fig(); estilo2d(a); titulo(f,"Integral impropia","Área bajo 1/x², desde 1 hacia el infinito")
     x=np.linspace(1,20,600); a.plot(x,1/x**2,color=C,lw=5); a.set_xlim(.8,20); a.set_ylim(0,1.1); t1=pie(f,"")
-    st=[]; ts=f.text(.5,.17 if VERT else .165,"",color=W,fontsize=34 if VERT else 30,ha="center"); N=160
+    st=[]; ts=f.text(.5,.33 if VERT else .275,"",color=W,fontsize=34 if VERT else 30,ha="center"); N=160
     def fr(k):
         s=ease(min(1,k/120)); t=1+19*s**2
         for p in st: p.remove()
@@ -85,6 +85,28 @@ def impropia():
         t1.set_text(("Área = %.3f"%(1-1/t)).replace(".",",")+("  → 1" if k>=120 else "")); 
         if k>=120: t1.set_color(Y)
     return f,FuncAnimation(f,fr,frames=N,interval=40),"impropia"
+
+def arandela():
+    f,a=fig("3d"); titulo(f,"Método de arandelas","Región entre y = x e y = x²  (con hueco)" if VERT else "Región entre y = x e y = x² girando alrededor del eje x (tiene un hueco)")
+    a.set_facecolor(BG); a.xaxis.pane.set_facecolor(BG); a.yaxis.pane.set_facecolor(BG); a.zaxis.pane.set_facecolor(BG)
+    for ax in (a.xaxis,a.yaxis,a.zaxis): ax.pane.set_edgecolor("#334"); ax._axinfo["grid"]["color"]="#223"; ax.set_tick_params(colors=G,labelsize=14)
+    a.set_xlim(0,1.05); a.set_ylim(-1,1); a.set_zlim(-1,1); a.set_box_aspect((2.2,1,1),zoom=1.4 if not VERT else 1.3)
+    t1=pie(f,"V = 0,000",y=.21 if not VERT else .27); N=260; th=np.linspace(0,2*np.pi,60); sup=[]
+    def fr(k):
+        s=ease(min(1,k/170)); 
+        for p in sup: p.remove()
+        sup.clear()
+        if s>.01:
+            xs=np.linspace(0,s,60); T,X=np.meshgrid(th,xs)
+            sup.append(a.plot_surface(X,X*np.cos(T),X*np.sin(T),color=C,alpha=.35,lw=0))
+            sup.append(a.plot_surface(X,X**2*np.cos(T),X**2*np.sin(T),color=O,alpha=.7,lw=0))
+            for xi in np.linspace(0,s,max(2,int(s*16))):
+                sup.append(a.plot(np.full_like(th,xi),xi*np.cos(th),xi*np.sin(th),color=Y,lw=1.4)[0])
+                sup.append(a.plot(np.full_like(th,xi),xi**2*np.cos(th),xi**2*np.sin(th),color=W,lw=1.0)[0])
+        a.view_init(elev=22,azim=-60+k*(360/N)); V=np.pi*(s**3/3-s**5/5)
+        t1.set_text(("V acumulado = %.3f"%V).replace(".",",")+(" = 2π/15" if k>=170 else ""))
+        if k>=170: t1.set_color(Y)
+    return f,FuncAnimation(f,fr,frames=N,interval=40),"arandela"
 
 for nombre in sys.argv[1].split(","):
     f,an,n=globals()[nombre](); guardar(an,f,n); print("listo",n,flush=True)

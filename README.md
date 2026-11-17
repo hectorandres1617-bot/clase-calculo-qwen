@@ -8,7 +8,12 @@ Material del video de **Automátika**: una IA que corre en un computador propio 
 ```
 python3 scripts/verificar.py
 ```
-Calcula con el método de Simpson: área bajo 3x²+1 en [0,2] = 10; área entre y=x e y=x² = 1/6; volumen del sólido de y=√x (discos) = 8π ≈ 25,13; ∫x·ln x en [0,1] = −1/4; ∫1/x² desde 1 → 1.
+Calcula con el método de Simpson: área bajo 3x²+1 en [0,2] = 10; área entre y=x e y=x² = 1/6; volumen del sólido de y=√x (discos) = 8π ≈ 25,13; volumen con hueco (arandela) entre y=x e y=x² = 2π/15 ≈ 0,419; ∫x·ln x en [0,1] = −1/4; ∫1/x² desde 1 → 1.
+
+## Definición usada (giro alrededor del eje x)
+- **Disco (sin hueco):** V = π ∫ R(x)² dx.
+- **Arandela (con hueco):** V = π ∫ [R(x)² − r(x)²] dx, con R = radio exterior y r = radio interior.
+- En y = √x entre 0 y 4 la región toca el eje: r = 0, así que la arandela es un disco. Ejemplo con hueco: región entre y = x e y = x² → V = 2π/15.
 
 ## Error de la IA que encontramos
 Qwen dijo que el sólido de y=√x girado «es un cono». Es un paraboloide: el cono daría 16π/3 ≈ 16,76 y el volumen correcto es 8π ≈ 25,13. Siempre hay que revisar a la IA.
@@ -16,8 +21,8 @@ Qwen dijo que el sólido de y=√x girado «es un cono». Es un paraboloide: el 
 ## Animaciones y gráficas
 ```
 pip install matplotlib numpy      # además necesitas ffmpeg instalado
-python3 scripts/animaciones.py riemann,entre,volumen,impropia      # horizontal 1920x1080
-python3 scripts/animaciones.py riemann,entre,volumen,impropia v    # vertical 1080x1920
+python3 scripts/animaciones.py riemann,entre,volumen,arandela,impropia      # horizontal 1920x1080
+python3 scripts/animaciones.py riemann,entre,volumen,arandela,impropia v    # vertical 1080x1920
 python3 scripts/graficas.py
 ```
 (crea antes una carpeta `anim/` y otra `capturas/`). Las gráficas las hace Python con los datos de los ejemplos; Qwen no las dibujó.
